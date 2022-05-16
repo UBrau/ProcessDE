@@ -2,10 +2,6 @@
 ### Score differential expression in RNA-seq data based on one of three quantification methods
 ### (salmon, vast-tools, or bam files and samtools idxstats)### using edgeR.
 ### Outputs a table of gene RPKM in each sample, a table of DE results, and several plots.
-###
-### Changes: Fixed a bug that would cause an error if a geneInfo file was not submitted
-###
-### U. Braunschweig 2018-2021
 
 cArgs <- commandArgs(TRUE)
 
