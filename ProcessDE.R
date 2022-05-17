@@ -17,11 +17,11 @@ opt.list <- list(
                 gene quant.sf)."),
     make_option(c("-c", "--contrTab"),       action="store", type="character",      metavar="CSVFILE",
                 help="Contrast table in CSV format with, at least, columns 'Experimental' and 'Control',
-                matching levels in the 'Type' column of the sample Table."),
+                matching levels in the 'Type' column of the sample table."),
     make_option(c("-t", "--tx2gene"),        action="store",      metavar="FILE",
     		default="/home/blencowe/blencowe1/ulrich/genomes/mm10/GCvM21_txToGene.txt",
                 help="A tab-separated file with, at least, columns transcID, geneID and geneName,
-                where transcID and geneID matche the IDs used for Salmon quantification."),
+                where transcID and geneID match the IDs used for Salmon quantification."),
     make_option(c("-r", "--rawCounts"),      action="store", type="character",      metavar="FILE",
                 help="vast-tools cRPKM_AND_COUNTS table. Mutually exclusive with Salmon output."),
     make_option(c("-i", "--geneInfo"),       action="store", type="character", metavar="FILE",
@@ -47,7 +47,8 @@ opt.list <- list(
 )
 
 opt <- parse_args(OptionParser(
-    usage = "Perform edgeR differential expression analysis based on Salmon gene-level quantification",
+    usage = "Perform edgeR differential expression analysis based on Salmon gene-level quantification
+             or vast-tools counts table",
     option_list=opt.list),
     args=cArgs)
 
