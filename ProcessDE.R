@@ -258,7 +258,12 @@ edgeRsalmon <- function(tx2gene, files, opt, outDir, ctl, uqContr) {
     if (!all(idMatch)) {
         stop("Only ", length(which(idMatch)), "/", length(idMatch),
              " IDs of Salmon output found in tx2gene table")
-    }
+    } else {
+        gz <- gzfile(file.path(outDir, "Pseudocounts.tximport.tab.gz"), "w")
+        write.table(cts, row.names=T, col.names=T, quote=F, sep='\t',
+            file=gz)
+        close(gz)
+    }   
     
     normMat <- txi$length
     normMat <- normMat / exp(rowMeans(log(normMat)))
