@@ -60,8 +60,8 @@ libMissing <- !require("edgeR", quietly=T)    && stop("Failed to load R package 
 libMissing <- !require("gplots", quietly=T)   && stop("Failed to load R package 'gplots'")
 
 
-### Check and load R library
 
+## Check and load R library
 if (is.na(opt$RlibPath)) {
     argv <- commandArgs(trailingOnly = F)
     scriptPath <- dirname(sub("--file=","",argv[grep("--file",argv)]))
@@ -71,9 +71,6 @@ if (is.na(opt$RlibPath)) {
 }
 if (!file.exists(RlibPath)) {stop("R library not found at ", RlibPath)}
 source(RlibPath)
-
-
-### Body
 
 ## Check options
 if (is.null(opt$sampleTab))            {stop("--sampleTab must be provided")}
@@ -106,6 +103,7 @@ if (mode %in% c("vast","idxstats") & !is.null(opt$tx2gene))  {
 if (!is.null(opt$geneInfo) && mode == "salmon" && !file.exists(opt$geneInfo)) {
     stop(opt$geneInfo, " not found")
 }
+
 
 pathSlots <- which(names(opt) %in% c("sampleTab","tx2gene","rawCounts","geneInfo","outDir"))
 suppressWarnings(opt[pathSlots] <- sapply(opt[pathSlots], normalizePath))
