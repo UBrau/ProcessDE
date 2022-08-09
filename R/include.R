@@ -201,8 +201,13 @@ edgeRsalmon <- function(tx2gene, files, opt, outDir, ctl, uqContr) {
         stop("Only ", length(which(idMatch)), "/", length(idMatch),
              " IDs of Salmon output found in tx2gene table")
     } else {
-        gz <- gzfile(file.path(outDir, "Pseudocounts.tximport.tab.gz"), "w")
+        gz <- gzfile(file.path(outDir, "tximport.pseudocounts.tab.gz"), "w")
         write.table(cts, row.names=T, col.names=T, quote=F, sep='\t',
+            file=gz)
+        close(gz)
+
+        gz <- gzfile(file.path(outDir, "tximport.lengths.tab.gz"), "w")
+        write.table(txi$length, row.names=T, col.names=T, quote=F, sep='\t',
             file=gz)
         close(gz)
     }   
