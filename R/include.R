@@ -60,7 +60,7 @@ de.table <- function(de, contrasts) {
 ### Generate a table with DE for all contrasts
     out <- data.frame(geneID = de[[1]]$ID)
     for (i in 1:length(contrasts)) {
-        tmp <- signif(de[[i]][,c(2,4,5)],4)
+        tmp <- signif(de[[i]][, names(de[[i]]) %in% c("log2FC","PValue","FDR")], 4)
         names(tmp) <- paste(contrasts[[i]][1], ":", contrasts[[i]][2], ".", names(tmp), sep="")
         out <- cbind(out, tmp)
     }
