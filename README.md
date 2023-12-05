@@ -1,5 +1,5 @@
 # ProcessDE
-### Processing RNAseq data for gene expression analysis
+### Processing RNA-seq data for gene expression analysis
 
 Starting from either isoform-level counts quantified with [_Salmon_](https://combine-lab.github.io/salmon/) (recommended), BAM files quantified with [_samtools_](http://www.htslib.org/doc/samtools-idxstats.html), or [_vast-tools_](https://github.com/vastgroup/vast-tools) expression counts, use the _exactTest_ functionality in the R package _edgeR_ to quantify each desired contrast. Replicates belonging to each sample type and contrasts are specified in CSV tables.
 Genes are considered differentially expressed if (1) their expression, measured in counts per million (CPM), is at least a given threshold in at least one sample type of a contrast; (2) their log2-fold change is at least a given threshold, and (3) their FDR is lower than a given threshold. Defaults for thresholds can be changed optionally.
@@ -40,3 +40,6 @@ Please let me know if you have questions or encounter errors by emailing or rais
 Ulrich Braunschweig, University of Toronto
 
 [email](mailto:u.braunschweig@utoronto.ca)
+
+## Reference
+If using in published work, please cite the DOI of the release.
