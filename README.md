@@ -31,7 +31,12 @@ R packages 'optparse', 'edgeR', 'gplots', and 'tximport'.
 - Optionally, folder with input files for GO analysis per contrast
 - Log file
 
+## Example input
+Input files are provided in the _example_ folder based on _Salmon_ counts of RNA-seq samples from mouse neurons depolarized with KCl, Maze et al., _Neuron_ (2015), GEO: [GSE69807](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE69807). The subfolder auxFiles contains a transcript to gene mapping file and a gene information file generated from the GENCODE vM21 annotation.
+
 ## Author
+Please let me know if you have questions or encounter errors by emailing or raising an issue.
+
 Ulrich Braunschweig, University of Toronto
 
 [email](mailto:u.braunschweig@utoronto.ca)
