@@ -41,7 +41,7 @@ opt.list <- list(
     make_option(c("-x", "--minRPKM"),        action="store", default=5,             metavar="NUM",
                 help="Minimum expression RPKM for inclusion in output table [%default]"),
     make_option(c("-C", "--colors"),         action="store",
-                default="dodgerblue,grey50,darkmagenta,darkorange1,darkolivegreen2,darkslategray4,burlywood3,cyan3,darkgoldenrod3,firebrick3,navy,seagreen4",
+                default="dodgerblue,grey50,darkmagenta,darkorange1,darkolivegreen2,darkslategray4,burlywood3,cyan3,darkgoldenrod3,firebrick3,navy,seagreen4,darkgoldenrod1,burlywood1,grey80,deeppink,mediumpurple1,yellow2",
                 metavar="NUM",
                 help="Colors per sample type for plotting [%default]"),
     make_option("--RlibPath",                action="store", default=NA,             metavar="FILE",
@@ -205,7 +205,7 @@ cols <- strsplit(opt$colors, split=",")[[1]]
 if (!all(cols %in% colors())) {
     stop("Color(s) not defined: ", paste(cols[!(cols %in% colors())], collapse=", "))
 }
-if (length(uqTypes) > length(cols)) {cols <- rep(cols, length(uqTypes) %/% length(cols) + 1)}
+if (length(uqTypes) > length(cols)) {cols <- rep(cols, length(uqTypes) %/% length(cols) + 1)[1:length(uqTypes)]}
 sampleTab$col <- sapply(sampleTab$Type, FUN=function(x) {cols[which(uqTypes == x)]})
 
 
@@ -278,7 +278,8 @@ mds <- cmdscale(distCts, k=2)
 pdf(file.path(outDir, "MDS_pseudoCts.pdf"), wid=5.5, hei=6)
 plot(mds[,c(1,2)], col=sampleTab$col, pch=20,
      main="Multi-dimensional scaling", xlab="DIM 1", ylab="DIM 2")
-text(mds[,c(1,2)], labels=rownames(mds), cex=0.8, pos=1, col=sampleTab$col)
+text(mds[,c(1,2)], labels=rownames(mds), 
+     cex=ifelse(nrow(sampleTab) > 12, 0.6, 0.8), pos=1, col=sampleTab$col)
 dev.off()
 
 
@@ -343,7 +344,6 @@ if (!opt$noGO) {
 write.table(paste("Completed", strftime(Sys.time())),
             row.names=F, col.names=F, quote=F, sep='\t',
             file=logName, append=T)
-
 
 
 

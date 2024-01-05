@@ -101,8 +101,8 @@ scatterVsOther <- function(x,y, opt, dat=res$out.de) {
     yname <- paste(y, collapse=":")
     xi  <- which(colnames(dat) == paste(xname, "log2FC", sep="."))
     yi  <- which(colnames(dat) == paste(yname, "log2FC", sep="."))
-    xei <- sapply(x, FUN=function(z) {grep(paste(z, "RP", sep="."), colnames(dat))})
-    yei <- sapply(y, FUN=function(z) {grep(paste(z, "RP", sep="."), colnames(dat))})
+    xei <- sapply(x, FUN=function(z) {grep(paste(z, "RP[A-Z]+$", sep="\\."), colnames(dat))})
+    yei <- sapply(y, FUN=function(z) {grep(paste(z, "RP[A-Z]+$", sep="\\."), colnames(dat))})
     xexpr <- apply(dat[,xei], MAR=1, max, na.rm=T) > opt$minRPKM
     yexpr <- apply(dat[,yei], MAR=1, max, na.rm=T) > opt$minRPKM
     use   <- xexpr | yexpr
@@ -123,7 +123,7 @@ scatterVsOther <- function(x,y, opt, dat=res$out.de) {
          xlab=sub("\\.log2FC", " (log2FC)", colnames(dat)[xi]),
          ylab=sub("\\.log2FC", " (log2FC)", colnames(dat)[yi]))
     title(main=paste("Expression differences"))
-    points(dat[,xi], dat[,yi], pch=20, , cex=0.6, col=sigcols)
+    points(dat[,xi], dat[,yi], pch=20, cex=0.6, col=sigcols)
     abline(a=0, b=1, lty=2)
     
     legend("topleft",
@@ -212,6 +212,7 @@ edgeRsalmon <- function(tx2gene, files, opt, outDir, ctl, uqContr) {
         close(gz)
     }   
     
+    ## Generate an offset to account for length bias (see tximport)
     normMat <- txi$length
     normMat <- normMat / exp(rowMeans(log(normMat)))
     
@@ -223,7 +224,7 @@ edgeRsalmon <- function(tx2gene, files, opt, outDir, ctl, uqContr) {
     dge$offset <- t(t(log(normMat)) + o)
 
     
-    dge <- calcNormFactors(dge)
+    dge <- suppressWarnings(calcNormFactors(dge))
     dge.all <- dge
     use <- rowSums(cpm(dge) > opt$minCPM) >= min(table(sampleTab$Type[sampleTab$Type %in% uqContr]))
     dge$counts <- dge$counts[use,]
