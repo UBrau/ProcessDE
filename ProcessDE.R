@@ -19,14 +19,14 @@ opt.list <- list(
                 help="Contrast table in CSV format with, at least, columns 'Experimental' and 'Control',
                 matching levels in the 'Type' column of the sample table."),
     make_option(c("-t", "--tx2gene"),        action="store",      metavar="FILE",
-    		default="/home/blencowe/blencowe1/ulrich/genomes/mm10/GCvM21_txToGene.txt",
+    		        default="/home/blencowe/blencowe1/ulrich/genomes/mm10/GCvM21_txToGene.txt",
                 help="A tab-separated file with, at least, columns transcID, geneID and geneName,
                 where transcID and geneID match the IDs used for Salmon quantification."),
     make_option(c("-r", "--rawCounts"),      action="store", type="character",      metavar="FILE",
                 help="vast-tools cRPKM_AND_COUNTS table. Mutually exclusive with Salmon output."),
     make_option(c("-i", "--geneInfo"),       action="store", type="character", metavar="FILE",
                 help="A tab-separated file with, at least, columns chrom, start, end, strand, geneID,
-                geneName, biotype [%default]"),
+                geneName, biotype"),
     make_option(c("-o", "--outDir"),         action="store", default="./DEresults", metavar="DIR",
                 help="Output directory. Will be created if it does not exist [%default]"),
     make_option("--noGO",                   action="store_true", default="FALSE",
@@ -43,17 +43,18 @@ opt.list <- list(
     make_option(c("-C", "--colors"),         action="store",
                 default="dodgerblue,grey50,darkmagenta,darkorange1,darkolivegreen2,darkslategray4,burlywood3,cyan3,darkgoldenrod3,firebrick3,navy,seagreen4,darkgoldenrod1,burlywood1,grey80,deeppink,mediumpurple1,yellow2",
                 metavar="NUM",
-                help="Colors per sample type for plotting [%default]"),
+                help="Colors per sample type for plotting [default color selection]"),
     make_option("--RlibPath",                action="store", default=NA,             metavar="FILE",
                 help="Path to R function library 'include.R' [./R/include.R relative to executable]")
 		
 )
 
-opt <- parse_args(OptionParser(
-    usage = "Perform edgeR differential expression analysis based on Salmon gene-level quantification
-             or vast-tools counts table",
-    option_list=opt.list),
-    args=cArgs)
+optPars <- OptionParser(
+  usage       = "%prog -s CSV -c CSV (-t FILE | -r FILE) -i FILE [OPTIONS]\n",
+  description = "Perform edgeR differential expression analysis based on Salmon gene-level quantification
+        or vast-tools counts table",
+  option_list=opt.list)
+opt <- parse_args(optPars, args=cArgs)
 
 libMissing <- !require("tximport", quietly=T) && stop("Failed to load R package 'tximport'")
 libMissing <- !require("edgeR", quietly=T)    && stop("Failed to load R package 'edgeR'")
@@ -73,24 +74,43 @@ if (!file.exists(RlibPath)) {stop("R library not found at ", RlibPath)}
 source(RlibPath)
 
 ## Check options
-if (is.null(opt$sampleTab))            {stop("--sampleTab must be provided")}
-if (is.null(opt$contrTab))             {stop("--contrTab must be provided")}
-if (!file.exists(opt$sampleTab))       {stop(opt$sampleTab, " not found")}
-if (!file.exists(opt$contrTab))        {stop(opt$contrTab, " not found")}
+if (is.null(opt$sampleTab)) {
+    print_help(optPars)
+    stop("--sampleTab must be provided")
+}
+if (is.null(opt$contrTab)) {
+    print_help(optPars)
+    stop("--contrTab must be provided")
+}
+if (!file.exists(opt$sampleTab)) {
+    stop(opt$sampleTab, " not found")
+}
+if (!file.exists(opt$contrTab)) {
+  stop(opt$contrTab, " not found")
+}
 sampleTab <- read.csv(opt$sampleTab, as.is=T)
 contrTab  <- read.csv(opt$contrTab, as.is=T)
 
 if (is.null(opt$rawCounts)) {
-    if (is.null(sampleTab$File))       {stop("Provide either paths of Salmon/idxstats output files in the sample Table or vast-tools counts!")}
+    if (is.null(sampleTab$File)) {
+      print_help(optPars)
+      stop("Provide either paths of Salmon/idxstats output files in the sample table or vast-tools counts!")
+    }
     if (all(grepl("quant.sf", sampleTab$File))) {
         mode <- "salmon"
-        if (is.null(opt$tx2gene))      {stop("--tx2gene not specified")}
-        if (!file.exists(opt$tx2gene)) {stop(opt$tx2gene, " not found")}
+        if (is.null(opt$tx2gene))      {
+            print_help(optPars)
+            stop("--tx2gene not specified")
+        }
+        if (!file.exists(opt$tx2gene)) {
+            stop(opt$tx2gene, " not found")
+        }
     } else {
         mode <- "idxstats"
     }
 } else {
     if (!is.null(sampleTab$File)) {
+        print_help(optPars)
         stop("Both Salmon/idxstats output files (in sample table) as well as vast-tools counts provided. Don't know what to do.")
     }
     mode <- "vast"
@@ -248,10 +268,11 @@ for (i in 1:length(contrasts)) {
 
 ## MA plots
 for (i in 1:length(contrasts)) {
+    j <- sapply(contrasts[[i]], FUN=function(x) {
+        grep(paste0(x, ".RP"), colnames(res$rpkm))
+    })
     plot.MA(outDir, contrasts[[i]], res$et[[i]], res$de[[i]], opt,
-            rpkmMax = apply(res$rpkm[, sapply(contrasts[[i]], FUN=function(x) {
-                grep(paste0(x, ".RP"), colnames(res$rpkm))
-            })], MAR=1, max, na.rm=T))
+            rpkmMax = apply(res$rpkm[,j], MAR=1, max, na.rm=T))
 }
                                         
 
@@ -347,3 +368,21 @@ write.table(paste("Completed", strftime(Sys.time())),
 
 
 
+########
+stop("THE END")
+
+setwd("~/Data/CHyInt_Sha/RNAseq/231205_candidates/analyses_TKO.ctrl.swap/")
+opt <- list()
+opt$sampleTab <- "Samples.guides_RPE1_UB231211_local.csv"
+opt$contrTab <- "Contrasts.guides.basic_RPE1_UB231211.csv"
+opt$tx2gene <- "~/Data/genomes/hg38/GCv43_txToGene.txt"
+opt$geneInfo <- "~/Data/genomes/hg38/GCv43_genes.info_UB231207.tab"
+opt$outDir <- "expression.TEST"
+opt$noGO <- T
+opt$minCPM <- 0.1
+opt$minLFC <- 1
+opt$maxFDR <- 0.05
+opt$minRPKM <- 5
+opt$colors <- "dodgerblue,grey50,darkmagenta,darkorange1,darkolivegreen2,darkslategray4,burlywood3,cyan3,darkgoldenrod3,firebrick3,navy,seagreen4,darkgoldenrod1,burlywood1,grey80,deeppink,mediumpurple1,yellow2"
+opt$RlibPath <- NA
+RlibPath <- "~/Code/R/scripts/ProcessDE/R/include.R"

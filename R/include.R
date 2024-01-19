@@ -76,8 +76,8 @@ de.contr <- function(x, opt, de, geneInfo=NULL) {
         
     }
     out <- de[,c(1,2,
-                 grep(paste(x[1], "RP", sep="."), names(de)),
-                 grep(paste(x[2], "RP", sep="."), names(de)),
+                 grep(paste(x[1], "RP[A-Z]+$", sep="\\."), names(de)),
+                 grep(paste(x[2], "RP[A-Z]+$", sep="\\."), names(de)),
                  0:2 + grep(paste(paste(x, collapse="."), "log2FC", sep="."), names(de))
                  )]
     if (!is.null(geneInfo)) {
