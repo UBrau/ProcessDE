@@ -368,21 +368,3 @@ write.table(paste("Completed", strftime(Sys.time())),
 
 
 
-########
-stop("THE END")
-
-setwd("~/Data/CHyInt_Sha/RNAseq/231205_candidates/analyses_TKO.ctrl.swap/")
-opt <- list()
-opt$sampleTab <- "Samples.guides_RPE1_UB231211_local.csv"
-opt$contrTab <- "Contrasts.guides.basic_RPE1_UB231211.csv"
-opt$tx2gene <- "~/Data/genomes/hg38/GCv43_txToGene.txt"
-opt$geneInfo <- "~/Data/genomes/hg38/GCv43_genes.info_UB231207.tab"
-opt$outDir <- "expression.TEST"
-opt$noGO <- T
-opt$minCPM <- 0.1
-opt$minLFC <- 1
-opt$maxFDR <- 0.05
-opt$minRPKM <- 5
-opt$colors <- "dodgerblue,grey50,darkmagenta,darkorange1,darkolivegreen2,darkslategray4,burlywood3,cyan3,darkgoldenrod3,firebrick3,navy,seagreen4,darkgoldenrod1,burlywood1,grey80,deeppink,mediumpurple1,yellow2"
-opt$RlibPath <- NA
-RlibPath <- "~/Code/R/scripts/ProcessDE/R/include.R"
