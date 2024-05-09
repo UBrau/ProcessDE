@@ -9,6 +9,11 @@ Note that if your experimental design is complex, this approach may not be appro
 ## Dependencies
 R packages 'optparse', 'edgeR', 'gplots', and 'tximport'.
 
+## Usage
+`ProcessDE -h`
+
+`ProcessDE -s <CSVFILE> -c <CSVFILE> --tx2gene <TSVFILE> --geneInfo <TSVFILE>`
+
 ## Input
 - **Raw data files**: _Salmon_ transcript-level output files (recommended); output from _samtools idxstats_ quantification of BAM files; or _vast-tools_ expression output table
 - **Sample table** in CSV format with columns _Sample_ and _Type_. Sample names must be unique. There must be replicates for at least one of the sample types in each contrast. In case of _Salmon_ counts, an additional _File_ column must be present that contains the path to the raw files.
